@@ -23,7 +23,7 @@ void toBinaryPrint(uint8_t a)
     printf(" ");
 }
 
-void binaryCounter(uint8_t a, uint16_t& diff, uint16_t& comp)
+void binaryCounter(uint8_t a, uint64_t& diff, uint64_t& comp)
 {
     for (uint8_t i = 0x80; i != 0; i >>= 1)
     {

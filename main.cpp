@@ -14,8 +14,12 @@ int main(int argc, char * argv[])
     char* dataFile2 = 0;
     string compData;
 
-    uint16_t diffBits = 0;
-    uint16_t compBits = 0;
+    uint64_t diffBits = 0;
+    uint64_t compBits = 0;
+    uint16_t compTime = 0;
+
+    clock_t startTime;
+    clock_t endTime;
 
     size_t maxSize = 0;
     size_t fileSize1 = 0;
@@ -90,6 +94,7 @@ int main(int argc, char * argv[])
     }
 
     //compare two files with hamming distance alghoritm
+    startTime = clock();
     for (int i = 0; i < maxSize; i++)
     {
         if (i < fileSize1 && i < fileSize2)
@@ -100,19 +105,22 @@ int main(int argc, char * argv[])
         else if (i > fileSize2 && i <= fileSize1)
         {
             if (DEBUG_MODE)toBinaryPrint(hammingDistance(dataFile1[i], 0));
-            binaryCounter(hammingDistance(dataFile1[i], dataFile2[i]), diffBits, compBits);
+            binaryCounter(hammingDistance(dataFile1[i], 0), diffBits, compBits);
         }
         else if (i > fileSize1 && i <= fileSize2)
         {
             if (DEBUG_MODE)toBinaryPrint(hammingDistance(0, dataFile2[i]));
-            binaryCounter(hammingDistance(dataFile1[i], dataFile2[i]), diffBits, compBits);
+            binaryCounter(hammingDistance(0, dataFile2[i]), diffBits, compBits);
         }
-
     }
+    endTime = clock();
+    compTime = (endTime - startTime);
+
+
     printf("\n___________________________________________");
     printf("\nCompared bits: %d", compBits);
     printf("\nDifferent bits: %d", diffBits);
-    printf("\nComputation time: %d", diffBits);
+    printf("\nComputation time: %d", compTime);
     printf("\n___________________________________________");
     printf("\nPress ENTER to exit.");
     cin.get();
