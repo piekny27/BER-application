@@ -22,3 +22,12 @@ void toBinaryPrint(uint8_t a)
     }       
     printf(" ");
 }
+
+void binaryCounter(uint8_t a, uint16_t& diff, uint16_t& comp)
+{
+    for (uint8_t i = 0x80; i != 0; i >>= 1)
+    {
+        if (a & i) diff++;
+        comp++;
+    }
+}

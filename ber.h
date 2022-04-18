@@ -13,6 +13,7 @@
 uint8_t hammingDistance(uint8_t n1, uint8_t n2);
 
 void toBinaryPrint(uint8_t a);
+void binaryCounter(uint8_t a, uint16_t& counter, uint16_t& comp);
 #endif // !BER_H
 
 
