@@ -12,7 +12,7 @@
 /// <returns></returns>
 uint8_t hammingDistance(uint8_t n1, uint8_t n2);
 
-
+void toBinaryPrint(uint8_t a);
 #endif // !BER_H
 
 

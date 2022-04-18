@@ -13,3 +13,12 @@ uint8_t hammingDistance(uint8_t n1, uint8_t n2)
 
     return setBits;
 }
+
+void toBinaryPrint(uint8_t a)
+{
+    for (uint8_t i = 0x80; i != 0; i >>= 1)
+    {
+        printf("%c", (a & i) ? '1' : '0');
+    }       
+    printf(" ");
+}

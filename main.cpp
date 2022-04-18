@@ -10,7 +10,7 @@ int main(int argc, char * argv[])
 
     char* dataFile1 = 0;
     char* dataFile2 = 0;
-    char* compData = 0;
+    string compData;
 
     size_t maxSize = 0;
     size_t fileSize1 = 0;
@@ -68,15 +68,15 @@ int main(int argc, char * argv[])
     {
         if (i < fileSize1 && i < fileSize2) 
         {
-            compData[i] = hammingDistance(dataFile1[i], dataFile2[i]);
+            toBinaryPrint(hammingDistance(dataFile1[i], dataFile2[i]));
         }
         else if (i>fileSize2 && i<=fileSize1) 
         {
-            compData[i] = hammingDistance(dataFile1[i], 0);
+            toBinaryPrint(hammingDistance(dataFile1[i], 0));
         }
         else if (i>fileSize1 && i<=fileSize2)
         {
-            compData[i] = hammingDistance(0, dataFile2[i]);
+            toBinaryPrint(hammingDistance(0, dataFile2[i]));
         }
         
     }
