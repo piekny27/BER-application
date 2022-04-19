@@ -1,6 +1,6 @@
 #include "ber.h"
 
-uint8_t hammingDistance(uint8_t n1, uint8_t n2) 
+void hammingDistance(uint8_t n1, uint8_t n2, uint64_t& diffBits, uint64_t& compBits)
 {
     uint8_t x = n1 ^ n2;
     uint8_t setBits = 0;
@@ -10,24 +10,16 @@ uint8_t hammingDistance(uint8_t n1, uint8_t n2)
         setBits += x & 1;
         x >>= 1;
     }
-
-    return setBits;
+    diffBits += setBits;
+    compBits += 8;
 }
 
 void toBinaryPrint(uint8_t a)
 {
-    for (uint8_t i = 0x80; i != 0; i >>= 1)
+    uint8_t j;
+    for (j = 0x80; j != 0; j >>= 1)
     {
-        printf("%c", (a & i) ? '1' : '0');
+        printf("%c", (a & j) ? '1' : '0');
     }       
     printf(" ");
-}
-
-void binaryCounter(uint8_t a, uint64_t& diff, uint64_t& comp)
-{
-    for (uint8_t i = 0x80; i != 0; i >>= 1)
-    {
-        if (a & i) diff++;
-        comp++;
-    }
 }

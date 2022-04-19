@@ -9,11 +9,15 @@
 /// </summary>
 /// <param name="n1"></param>
 /// <param name="n2"></param>
-/// <returns></returns>
-uint8_t hammingDistance(uint8_t n1, uint8_t n2);
+/// <param name="diffBits"></param>
+/// <param name="compBits"></param>
+void hammingDistance(uint8_t n1, uint8_t n2, uint64_t& diffBits, uint64_t& compBits);
 
+/// <summary>
+/// Print binary representation of byte in console
+/// </summary>
+/// <param name="a"></param>
 void toBinaryPrint(uint8_t a);
-void binaryCounter(uint8_t a, uint64_t& counter, uint64_t& comp);
 #endif // !BER_H
 
 

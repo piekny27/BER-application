@@ -6,7 +6,8 @@ using namespace std;
 
 int main(int argc, char * argv[])
 {
-    static bool DEBUG_MODE = false;
+    bool DEBUG_MODE = false;
+    int argNo = 1;
 
     string path = filesystem::current_path().string();
 
@@ -27,25 +28,32 @@ int main(int argc, char * argv[])
 
     printf("Bit Error Rate Calculator v1.0\n\n");
 
-    if (argc != 3) 
+    if (argc != 3 && argc != 4) 
     {
         printf("Instruction:\n1.Put two files to .exe directory\n");
-        printf("2.Execute file in command line with file's name parameters\n\n");
+        printf("2.Execute file in command line with file's name parameters\n");
+        printf("NOTE: You can use debug mode by prefix -d\n\n");
         printf("Have fun!\n\n");
     }
 
     for (int i = 1; i < argc; i++)
     {
-        string p = path + "\\x64\\Debug\\" + argv[i]; //for debugger: path + "\\x64\\Debug\\" + argv[i];
-        cout << "File " << i << ": " << p << endl;
+        string p = path + "\\" + argv[i]; //for debugger: path + "\\x64\\Debug\\" + argv[i];
 
         try
         {
-            if (i == 1)
+            if (argv[i] == string("-d"))
+            {
+                printf("Debug mode on.\n");
+                DEBUG_MODE = true;
+                argNo++; 
+            }
+            else if (i == argNo)
             {
                 //load file
+                printf("File 1: %s\n", p.c_str());
                 ifstream file1(p.c_str(), ios::binary);
-                if (file1.good()) 
+                if (file1.good())
                 {
                     //get size of file
                     file1.seekg(0, ios::end);
@@ -58,14 +66,15 @@ int main(int argc, char * argv[])
                     //add null for pointer
                     dataFile1[fileSize1] = '\0';
                 }
-                else 
+                else
                 {
                     printf("File not found.\n");
                 }
             }
-            else if (i == 2)
+            else if (i == argNo+1)
             {
                 //load file
+                printf("File 2: %s\n", p.c_str());
                 ifstream file2(p.c_str(), ios::binary);
                 if (file2.good())
                 {
@@ -99,18 +108,39 @@ int main(int argc, char * argv[])
     {
         if (i < fileSize1 && i < fileSize2)
         {
-            if(DEBUG_MODE)toBinaryPrint(hammingDistance(dataFile1[i], dataFile2[i]));
-            binaryCounter(hammingDistance(dataFile1[i], dataFile2[i]), diffBits, compBits);
+            hammingDistance(dataFile1[i], dataFile2[i], diffBits, compBits);
+            if (DEBUG_MODE)
+            {
+                printf("\n%d| ", i);
+                toBinaryPrint(dataFile1[i]);
+                toBinaryPrint(dataFile2[i]);
+                printf(" |diff: %" PRIu64, diffBits);
+                printf(" |comp: %" PRIu64, compBits);
+            }
         }
-        else if (i > fileSize2 && i <= fileSize1)
+        else if (i >= fileSize2 && i < fileSize1)
         {
-            if (DEBUG_MODE)toBinaryPrint(hammingDistance(dataFile1[i], 0));
-            binaryCounter(hammingDistance(dataFile1[i], 0), diffBits, compBits);
+            hammingDistance(dataFile1[i], 0, diffBits, compBits);
+            if (DEBUG_MODE)
+            {
+                printf("\n%d| ", i);
+                toBinaryPrint(dataFile1[i]);
+                toBinaryPrint(0);
+                printf(" |diff: %" PRIu64, diffBits);
+                printf(" |comp: %" PRIu64, compBits);
+            }
         }
-        else if (i > fileSize1 && i <= fileSize2)
+        else if (i >= fileSize1 && i < fileSize2)
         {
-            if (DEBUG_MODE)toBinaryPrint(hammingDistance(0, dataFile2[i]));
-            binaryCounter(hammingDistance(0, dataFile2[i]), diffBits, compBits);
+            hammingDistance(0, dataFile2[i], diffBits, compBits);
+            if (DEBUG_MODE)
+            {
+                printf("\n%d| ", i);
+                toBinaryPrint(0);
+                toBinaryPrint(dataFile2[i]);
+                printf(" |diff: %" PRIu64, diffBits);
+                printf(" |comp: %" PRIu64, compBits);
+            }
         }
     }
     endTime = clock();
@@ -118,10 +148,12 @@ int main(int argc, char * argv[])
 
 
     printf("\n___________________________________________");
-    printf("\nCompared bits: %d", compBits);
-    printf("\nDifferent bits: %d", diffBits);
-    printf("\nComputation time: %d", compTime);
-    printf("\n___________________________________________");
-    printf("\nPress ENTER to exit.");
-    cin.get();
+    printf("\n\nCompared bits: %" PRIu64, compBits);
+    printf("\nDifferent bits: %" PRIu64, diffBits);
+    printf("\nComputation time[ms]: %" PRIu16, compTime);
+    printf("\n___________________________________________\n");
+
+    //printf("\n\nPress ENTER to exit.");
+    //cin.get();
+    return 0;
 }
