@@ -2,22 +2,24 @@
 #include "ber.h"
 
 
-using namespace std;
 
 int main(int argc, char * argv[])
 {
     bool DEBUG_MODE = false;
     int argNo = 1;
 
-    string path = filesystem::current_path().string();
+    std::string path = std::filesystem::current_path().string();
+    std::string logPath = path + "\\log.txt";
+    std::fstream logFile(logPath.c_str(), std::ios::out | std::ios::app);
 
     char* dataFile1 = 0;
     char* dataFile2 = 0;
-    string compData;
+    std::string compData;
 
     uint64_t diffBits = 0;
     uint64_t compBits = 0;
     uint16_t compTime = 0;
+    float berValue = 0;
 
     clock_t startTime;
     clock_t endTime;
@@ -26,7 +28,8 @@ int main(int argc, char * argv[])
     size_t fileSize1 = 0;
     size_t fileSize2 = 0;
 
-    printf("Bit Error Rate Calculator v1.0\n\n");
+    printf("\nBit Error Rate Calculator v1.0\n\n");  
+    logFilePrint(logFile, " Start Bit Error Rate Calculator v1.0\n");
 
     if (argc != 3 && argc != 4) 
     {
@@ -38,13 +41,14 @@ int main(int argc, char * argv[])
 
     for (int i = 1; i < argc; i++)
     {
-        string p = path + "\\" + argv[i]; //for debugger: path + "\\x64\\Debug\\" + argv[i];
+        std::string p = path + "\\x64\\Debug\\" + argv[i]; //for debugger: path + "\\x64\\Debug\\" + argv[i];
 
         try
         {
-            if (argv[i] == string("-d"))
+            if (argv[i] == std::string("-d"))
             {
                 printf("Debug mode on.\n");
+                logFilePrint(logFile, " Debug mode on.\n");
                 DEBUG_MODE = true;
                 argNo++; 
             }
@@ -52,13 +56,14 @@ int main(int argc, char * argv[])
             {
                 //load file
                 printf("File 1: %s\n", p.c_str());
-                ifstream file1(p.c_str(), ios::binary);
+                logFilePrint(logFile, " Loading File 1: " + std::string(p) + "\n");
+                std::ifstream file1(p.c_str(), std::ios::binary);
                 if (file1.good())
                 {
                     //get size of file
-                    file1.seekg(0, ios::end);
+                    file1.seekg(0, std::ios::end);
                     fileSize1 = file1.tellg();
-                    file1.seekg(0, ios::beg);
+                    file1.seekg(0, std::ios::beg);
                     if (maxSize < fileSize1) maxSize = fileSize1;
                     //create array and save bytes
                     dataFile1 = new char[fileSize1 + 1];
@@ -69,19 +74,21 @@ int main(int argc, char * argv[])
                 else
                 {
                     printf("File not found.\n");
+                    logFilePrint(logFile, " File 1 not found.\n");
                 }
             }
             else if (i == argNo+1)
             {
                 //load file
                 printf("File 2: %s\n", p.c_str());
-                ifstream file2(p.c_str(), ios::binary);
+                logFilePrint(logFile, "Loading File 2: " + std::string(p) + "\n");
+                std::ifstream file2(p.c_str(), std::ios::binary);
                 if (file2.good())
                 {
                     //get size of file
-                    file2.seekg(0, ios::end);
+                    file2.seekg(0, std::ios::end);
                     fileSize2 = file2.tellg();
-                    file2.seekg(0, ios::beg);
+                    file2.seekg(0, std::ios::beg);
                     if (maxSize < fileSize2) maxSize = fileSize2;
                     //create array and save bytes
                     dataFile2 = new char[fileSize2 + 1];
@@ -92,12 +99,14 @@ int main(int argc, char * argv[])
                 else
                 {
                     printf("File not found.\n");
+                    logFilePrint(logFile, " File 2 not found.\n");
                 }
             }
         }
-        catch (const exception ex)
+        catch (const std::exception ex)
         {
-            std::cout << "Error reading file: " << ex.what();
+            printf("Error reading file: %s", ex.what());
+            logFilePrint(logFile, " Error reading file " + std::string(ex.what()) + "\n");
             return 0;
         }
     }
@@ -145,15 +154,25 @@ int main(int argc, char * argv[])
     }
     endTime = clock();
     compTime = (endTime - startTime);
-
+    berValue = ((float)diffBits / (float)compBits) * 100.0;
 
     printf("\n___________________________________________");
     printf("\n\nCompared bits: %" PRIu64, compBits);
     printf("\nDifferent bits: %" PRIu64, diffBits);
     printf("\nComputation time[ms]: %" PRIu16, compTime);
+    printf("\nBit Error Rate: %f%%" , berValue);
     printf("\n___________________________________________\n");
 
-    //printf("\n\nPress ENTER to exit.");
-    //cin.get();
+    logFilePrint(logFile, 
+        " Calculation done: Compared bits: " + std::to_string(compBits) +
+        ", Different bits: " + std::to_string(diffBits) +
+        ", Computation time[ms]: " + std::to_string(compTime) +
+        ", Bit Error Rate: " + std::to_string(berValue) + "\n");
+
+    logFilePrint(logFile, " Close Bit Error Rate Calculator v1.0\n");
+    logFile.close();
+
+    printf("\n\nPress ENTER to exit.");
+    std::cin.get();
     return 0;
 }

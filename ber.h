@@ -18,6 +18,13 @@ void hammingDistance(uint8_t n1, uint8_t n2, uint64_t& diffBits, uint64_t& compB
 /// </summary>
 /// <param name="a"></param>
 void toBinaryPrint(uint8_t a);
+
+/// <summary>
+/// Print messages to log file
+/// </summary>
+/// <param name="logFile"></param>
+/// <param name="message"></param>
+void logFilePrint(std::fstream& logFile, std::string message);
 #endif // !BER_H
 
 

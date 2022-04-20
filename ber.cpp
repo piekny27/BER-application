@@ -1,5 +1,7 @@
 #include "ber.h"
 
+time_t result = std::time(nullptr);
+
 void hammingDistance(uint8_t n1, uint8_t n2, uint64_t& diffBits, uint64_t& compBits)
 {
     uint8_t x = n1 ^ n2;
@@ -22,4 +24,10 @@ void toBinaryPrint(uint8_t a)
         printf("%c", (a & j) ? '1' : '0');
     }       
     printf(" ");
+}
+
+void logFilePrint(std::fstream& logFile, std::string message)
+{
+    result = std::time(nullptr);
+    logFile << strtok(asctime(localtime(&result)), "\n") << message;
 }
