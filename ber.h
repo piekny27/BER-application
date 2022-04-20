@@ -25,6 +25,16 @@ void toBinaryPrint(uint8_t a);
 /// <param name="logFile"></param>
 /// <param name="message"></param>
 void logFilePrint(std::fstream& logFile, std::string message);
+
+/// <summary>
+/// Creates new file with the specified size and hex values
+/// </summary>
+/// <param name="path"></param>
+/// <param name="fileName"></param>
+/// <param name="fileSize"></param>
+/// <param name="value"></param>
+/// <returns>Return true if file is succesfully created</returns>
+bool createFile(std::string path, std::string fileName, size_t fileSize, uint8_t value);
 #endif // !BER_H
 
 

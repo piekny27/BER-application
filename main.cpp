@@ -6,14 +6,15 @@
 int main(int argc, char * argv[])
 {
     bool DEBUG_MODE = false;
+    bool CREATE_MODE = false;
     int argNo = 1;
 
-    std::string path = std::filesystem::current_path().string();
-    std::string logPath = path + "\\log.txt";
+    std::string path = std::filesystem::current_path().string() + "\\";
+    std::string logPath = path + "log.txt";
     std::fstream logFile(logPath.c_str(), std::ios::out | std::ios::app);
 
-    char* dataFile1 = 0;
-    char* dataFile2 = 0;
+    char* dataFile1;
+    char* dataFile2;
     std::string compData;
 
     uint64_t diffBits = 0;
@@ -34,14 +35,15 @@ int main(int argc, char * argv[])
     if (argc != 3 && argc != 4) 
     {
         printf("Instruction:\n1.Put two files to .exe directory\n");
-        printf("2.Execute file in command line with file's name parameters\n");
-        printf("NOTE: You can use debug mode by prefix -d\n\n");
+        printf("2.Execute file in command line with file's name parameters\n\n");
+        printf("NOTE 1: You can use debug mode by prefix -d\n");
+        printf("NOTE 2: You can use create test file mode by prefix -c\n\n");
         printf("Have fun!\n\n");
     }
 
     for (int i = 1; i < argc; i++)
     {
-        std::string p = path + "\\x64\\Debug\\" + argv[i]; //for debugger: path + "\\x64\\Debug\\" + argv[i];
+        std::string p = path + argv[i]; //for debugger: path + "x64\\Debug\\" + argv[i];
 
         try
         {
@@ -51,6 +53,38 @@ int main(int argc, char * argv[])
                 logFilePrint(logFile, " Debug mode on.\n");
                 DEBUG_MODE = true;
                 argNo++; 
+            }
+            else if (argv[i] == std::string("-c"))
+            {
+                std::string fileName;
+                size_t fileSize;
+                uint16_t value = 0x00;
+
+                printf("Create test file mode on.\n");
+                logFilePrint(logFile, " Create test file mode on.\n");
+
+                printf("File name: ");
+                std::cin >> fileName;
+
+                printf("File size[bytes]: ");
+                std::cin >> fileSize;
+
+                printf("Hex value[hex]: 0x");
+                std::cin >> std::hex>>  value;
+
+                if (createFile(path, fileName, fileSize, value)) 
+                {
+                    printf("File %s was created succesfully in %s\n", fileName.c_str(), path.c_str());
+                    logFilePrint(logFile, " File " + std::string(fileName) + " was created succesfully in " + std::string(path) + "\n");
+                }
+                else 
+                {
+                    printf("Error while creating file\n");
+                    logFilePrint(logFile, "Error while creating file\n");
+                }
+
+                logFilePrint(logFile, " Close Bit Error Rate Calculator v1.0\n");
+                return 0;
             }
             else if (i == argNo)
             {
@@ -73,7 +107,7 @@ int main(int argc, char * argv[])
                 }
                 else
                 {
-                    printf("File not found.\n");
+                    printf("File 1 not found.\n");
                     logFilePrint(logFile, " File 1 not found.\n");
                 }
             }
@@ -81,7 +115,7 @@ int main(int argc, char * argv[])
             {
                 //load file
                 printf("File 2: %s\n", p.c_str());
-                logFilePrint(logFile, "Loading File 2: " + std::string(p) + "\n");
+                logFilePrint(logFile, " Loading File 2: " + std::string(p) + "\n");
                 std::ifstream file2(p.c_str(), std::ios::binary);
                 if (file2.good())
                 {
@@ -98,7 +132,7 @@ int main(int argc, char * argv[])
                 }
                 else
                 {
-                    printf("File not found.\n");
+                    printf("File 2 not found.\n");
                     logFilePrint(logFile, " File 2 not found.\n");
                 }
             }
@@ -154,7 +188,7 @@ int main(int argc, char * argv[])
     }
     endTime = clock();
     compTime = (endTime - startTime);
-    berValue = ((float)diffBits / (float)compBits) * 100.0;
+    if (compBits != 0) berValue = ((float)diffBits / (float)compBits) * 100.0;
 
     printf("\n___________________________________________");
     printf("\n\nCompared bits: %" PRIu64, compBits);
@@ -172,7 +206,7 @@ int main(int argc, char * argv[])
     logFilePrint(logFile, " Close Bit Error Rate Calculator v1.0\n");
     logFile.close();
 
-    printf("\n\nPress ENTER to exit.");
-    std::cin.get();
+    //printf("\n\nPress ENTER to exit.");
+    //std::cin.get();
     return 0;
 }
